@@ -5,25 +5,17 @@ import (
 	"fmt"
 	"log"
 
-	"path/filepath"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
 )
 
 func CreateOrUpdareSecretDockerConfigJson(name, namespace, dockerConfigJson string) {
-	// Set the kubeconfig to use the in-cluster config.
-	var kubeconfig *string
-	if home := homedir.HomeDir(); home != "" {
-		kubeconfigPath := filepath.Join(home, ".kube", "config")
-		kubeconfig = &kubeconfigPath
-	}
-
-	// Build the configuration using the kubeconfig.
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	configOverrides := &clientcmd.ConfigOverrides{}
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+	config, err := kubeConfig.ClientConfig()
 	if err != nil {
 		log.Fatalf("Error building kubeconfig: %s", err.Error())
 	}
