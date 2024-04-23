@@ -13,3 +13,13 @@ docker-build:
 
 docker-push:
 	docker push ghcr.io/sikalabs/github-apps-pull-secret-sync
+
+docker-build-and-push-arm64:
+	@make docker-build-arm64
+	@make docker-push-arm64
+
+docker-build-arm64:
+	docker build --platform linux/arm64 -t ghcr.io/sikalabs/github-apps-pull-secret-sync:arm64 .
+
+docker-push-arm64:
+	docker push ghcr.io/sikalabs/github-apps-pull-secret-sync:arm64
