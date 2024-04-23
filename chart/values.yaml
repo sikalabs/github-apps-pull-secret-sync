@@ -1,0 +1,8 @@
+# Required
+key_pem:
+githubAppID:
+githubInstallationID:
+username:
+
+# Optional
+image: ghcr.io/sikalabs/github-apps-pull-secret-sync

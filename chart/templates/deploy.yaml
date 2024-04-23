@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      volumes:
+        - name: key-pem
+          secret:
+            secretName: {{ .Release.Name }}-key-pem
+      containers:
+        - name: main
+          image: {{ .Values.image }}
+          imagePullPolicy: Always
+          args:
+            - github-apps-pull-secret-sync
+            - {{ required ".Values.githubAppID is required" .Values.githubAppID | quote }}
+            - {{ required ".Values.githubInstallationID is required" .Values.githubInstallationID | quote }}
+            - /key.pem
+            - {{ required ".Values.username is required" .Values.username | quote }}
+          volumeMounts:
+            - name: key-pem
+              subPath: key.pem
+              mountPath: /key.pem
