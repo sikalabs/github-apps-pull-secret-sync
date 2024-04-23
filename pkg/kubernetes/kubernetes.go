@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	corev1 "k8s.io/api/core/v1"
@@ -38,7 +37,7 @@ func CreateOrUpdareSecretDockerConfigJson(name, namespace, dockerConfigJson stri
 		if updateErr != nil {
 			log.Fatalf("Failed to update secret: %s", updateErr.Error())
 		}
-		fmt.Println("Secret updated")
+		log.Printf("Secret %s/%s updated\n", namespace, name)
 	} else {
 		// Create secret if it does not exist.
 		secret := &corev1.Secret{
@@ -55,6 +54,6 @@ func CreateOrUpdareSecretDockerConfigJson(name, namespace, dockerConfigJson stri
 		if createErr != nil {
 			log.Fatalf("Failed to create secret: %s", createErr.Error())
 		}
-		fmt.Println("Secret created")
+		log.Printf("Secret %s/%s created\n", namespace, name)
 	}
 }
