@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 6 {
-		log.Fatalf("Usage github-apps-pull-secret-sync "+version.Version+": %s <githubAppID> <githubInstallationID> <privateKeyPath> <username> <namespace> [<namespace> ...]", os.Args[0])
+	if len(os.Args) < 5 {
+		log.Fatalf("Usage github-apps-pull-secret-sync "+version.Version+": %s <githubAppID> <githubInstallationID> <privateKeyPath> <username> [<namespace> ...]", os.Args[0])
 	}
 
 	log.Println("Starting github-apps-pull-secret-sync", version.Version)
@@ -20,7 +20,11 @@ func main() {
 	for {
 		token := ghcr.GetGhcrToken(os.Args[1], os.Args[2], os.Args[3])
 		dockerConfigJson := ghcr.CreateDockerConfigJson(os.Args[4], token)
-		for _, namespace := range os.Args[5:] {
+		namespaces := os.Args[5:]
+		if len(namespaces) == 0 {
+			namespaces = kubernetes.GetNamespaces()
+		}
+		for _, namespace := range namespaces {
 			kubernetes.CreateOrUpdareSecretDockerConfigJson("github-apps-pull-secret", namespace, dockerConfigJson)
 		}
 		log.Println("Sleeping 50 minutes ...")
