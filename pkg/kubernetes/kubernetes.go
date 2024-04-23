@@ -57,3 +57,26 @@ func CreateOrUpdareSecretDockerConfigJson(name, namespace, dockerConfigJson stri
 		log.Printf("Secret %s/%s created\n", namespace, name)
 	}
 }
+
+func GetNamespaces() []string {
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	configOverrides := &clientcmd.ConfigOverrides{}
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+	config, err := kubeConfig.ClientConfig()
+	if err != nil {
+		log.Fatalf("Error building kubeconfig: %s", err.Error())
+	}
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		log.Fatalf("Error creating Kubernetes client: %s", err.Error())
+	}
+	namespaceList, err := clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		log.Fatalf("Error getting namespaces: %s", err.Error())
+	}
+	namespaces := []string{}
+	for _, namespace := range namespaceList.Items {
+		namespaces = append(namespaces, namespace.Name)
+	}
+	return namespaces
+}
