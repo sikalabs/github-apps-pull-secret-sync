@@ -46,6 +46,7 @@ func CreateOrUpdareSecretDockerConfigJson(name, namespace, dockerConfigJson stri
 				Name:      name,
 				Namespace: namespace,
 			},
+			Type: corev1.SecretTypeDockerConfigJson,
 			StringData: map[string]string{
 				corev1.DockerConfigJsonKey: dockerConfigJson,
 			},
