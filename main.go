@@ -15,6 +15,8 @@ func main() {
 		log.Fatalf("Usage github-apps-pull-secret-sync "+version.Version+": %s <githubAppID> <githubInstallationID> <privateKeyPath> <username> <namespace> [<namespace> ...]", os.Args[0])
 	}
 
+	log.Println("Starting github-apps-pull-secret-sync", version.Version)
+
 	for {
 		token := ghcr.GetGhcrToken(os.Args[1], os.Args[2], os.Args[3])
 		dockerConfigJson := ghcr.CreateDockerConfigJson(os.Args[4], token)
